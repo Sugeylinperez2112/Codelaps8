@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,7 +70,7 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _buildListItem(BuildContext context, int index) {
-    // Lista de lugares turísticos con fechas y descripciones
+    // Lista de lugares turísticos con fechas, descripciones y temperaturas
     List<String> lugares = [
       'Cascada Blanca',
       'Zoológico Nica',
@@ -94,36 +95,79 @@ class MyApp extends StatelessWidget {
       'Parques, mercados, museos y lagunas',
     ];
 
-    // Asegúrate de que el índice esté dentro del rango de lugares, fechas y descripciones
+    List<int> temperaturas = [
+      28, // Temperatura para Cascada Blanca
+      30, // Temperatura para Zoológico Nica
+      32, // Temperatura para Pochomil
+      29, // Temperatura para San Juan del Sur
+      31, // Temperatura para Masaya
+    ];
+
+    // Asegúrate de que el índice esté dentro del rango de lugares, fechas, descripciones y temperaturas
     if (index >= lugares.length ||
         index >= fechas.length ||
-        index >= descripciones.length) {
+        index >= descripciones.length ||
+        index >= temperaturas.length) {
       return const SizedBox(); // Retorna un contenedor vacío si el índice está fuera de rango
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white), // Bordes con líneas blancas
-      ),
-      child: ListTile(
-        leading: Image.asset(
-          'assets/lugar${index + 1}.png', // Ruta relativa de la imagen del lugar turístico
-          width: 50,
-          height: 50,
-          fit: BoxFit.cover, // Ajustar la imagen al tamaño del contenedor
+    return GestureDetector(
+      onTap: () {
+        _showImageCarousel(context, index);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white), // Bordes con líneas blancas
         ),
-        title: Text(lugares[index]),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Fecha: ${fechas[index]}'),
-            Text(descripciones[index]),
-          ],
+        child: ListTile(
+          leading: Image.asset(
+            'assets/lugar${index + 1}.png', // Ruta relativa de la imagen del lugar turístico
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover, // Ajustar la imagen al tamaño del contenedor
+          ),
+          title: Text(lugares[index]),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Fecha: ${fechas[index]}'),
+              Text(descripciones[index]),
+            ],
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.grey[800],
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Text(
+              '${temperaturas[index]}°C',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
         ),
-        onTap: () {
-          // Acción al hacer clic en el elemento
-        },
       ),
     );
+  }
+
+  void _showImageCarousel(BuildContext context, int index) {
+    // Aquí mostramos el carrusel de imágenes usando carousel_slider
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (BuildContext context) => Scaffold(
+        appBar: AppBar(),
+        body: CarouselSlider(
+          items: [
+            Image.asset('assets/lugar${index + 1}_imagen1.png'),
+            Image.asset('assets/lugar${index + 1}_imagen2.png'),
+            // Agrega más imágenes según sea necesario
+          ],
+          options: CarouselOptions(
+            aspectRatio: 16 / 9,
+            enlargeCenterPage: true,
+            autoPlay: true,
+          ),
+        ),
+      ),
+    ));
   }
 }
